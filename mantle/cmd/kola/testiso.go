@@ -345,10 +345,11 @@ func runTestIso(cmd *cobra.Command, args []string) error {
 		delete(targetScenarios, scenarioISOAsDisk)
 	}
 
-	// s390x: iso-install does not work because s390x uses an El Torito image
+	// s390x doesn't support minimal ISO or ISO kargs injection.
 	if coreosarch.CurrentRpmArch() == "s390x" {
-		fmt.Println("Skipping iso-install on s390x")
-		noiso = true
+		fmt.Printf("Skipping miniso-install and miniso-install-nm; not supported on %s\n", coreosarch.CurrentRpmArch())
+		delete(targetScenarios, scenarioMinISOInstall)
+		delete(targetScenarios, scenarioMinISOInstallNm)
 	}
 
 	if nopxe {
