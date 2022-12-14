@@ -696,17 +696,18 @@ boot
             fh.write('initrd data\n')
         with open(os.path.join(tmpisoimagespxe, 'vmlinuz'), 'w') as fh:
             fh.write('the kernel\n')
-        with open(os.path.join(tmpisoisolinux, 'isolinux.bin'), 'rb+') as fh:
-            flen = fh.seek(0, 2)
-            fh.truncate(0)
-            fh.truncate(flen)
-            fh.seek(64)
-            # isohybrid checks for this magic
-            fh.write(b'\xfb\xc0\x78\x70')
-        for f in ensure_glob(os.path.join(tmpisoisolinux, '*.c32')):
-            os.unlink(f)
-        for f in ensure_glob(os.path.join(tmpisoisolinux, '*.msg')):
-            os.unlink(f)
+        if os.path.isdir(tmpisoisolinux):
+            with open(os.path.join(tmpisoisolinux, 'isolinux.bin'), 'rb+') as fh:
+                flen = fh.seek(0, 2)
+                fh.truncate(0)
+                fh.truncate(flen)
+                fh.seek(64)
+                # isohybrid checks for this magic
+                fh.write(b'\xfb\xc0\x78\x70')
+            for f in ensure_glob(os.path.join(tmpisoisolinux, '*.c32')):
+                os.unlink(f)
+            for f in ensure_glob(os.path.join(tmpisoisolinux, '*.msg')):
+                os.unlink(f)
 
     runcmd(genisoargs_final)
 
