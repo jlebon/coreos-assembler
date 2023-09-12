@@ -230,6 +230,10 @@ func detachPrimaryBlockDevice(c cluster.TestCluster, m platform.Machine) {
 		}); err != nil {
 			c.Fatalf("Failed to retrieve boot ID: %v", err)
 		}
+
+		// Give some time to the host before doing the reboot.
+		time.Sleep(30 * time.Second)
+
 		err := m.Reboot()
 		if err != nil {
 			c.Fatalf("Failed to reboot the machine: %v", err)
