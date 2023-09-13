@@ -100,6 +100,11 @@ func runBootMirrorTest(c cluster.TestCluster) {
 			MinMemory:       4096,
 		},
 	}
+	// ppc64le and aarch64 use 64K pages
+	switch coreosarch.CurrentRpmArch() {
+	case "ppc64le", "aarch64":
+		options.MinMemory = 8192
+	}
 	// FIXME: for QEMU tests kola currently assumes the host CPU architecture
 	// matches the one under test
 	userdata := bootmirror.Subst("LAYOUT", coreosarch.CurrentRpmArch())
@@ -146,6 +151,11 @@ func runBootMirrorLUKSTest(c cluster.TestCluster) {
 			AdditionalDisks: []string{"5G"},
 			MinMemory:       4096,
 		},
+	}
+	// ppc64le and aarch64 use 64K pages
+	switch coreosarch.CurrentRpmArch() {
+	case "ppc64le", "aarch64":
+		options.MinMemory = 8192
 	}
 	// FIXME: for QEMU tests kola currently assumes the host CPU architecture
 	// matches the one under test
@@ -232,7 +242,7 @@ func detachPrimaryBlockDevice(c cluster.TestCluster, m platform.Machine) {
 		}
 
 		// Give some time to the host before doing the reboot.
-		time.Sleep(30 * time.Second)
+		// time.Sleep(30 * time.Second)
 
 		err := m.Reboot()
 		if err != nil {
