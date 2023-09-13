@@ -242,7 +242,7 @@ func detachPrimaryBlockDevice(c cluster.TestCluster, m platform.Machine) {
 		}
 
 		// Give some time to the host before doing the reboot.
-		// time.Sleep(30 * time.Second)
+		time.Sleep(30 * time.Second)
 
 		err := m.Reboot()
 		if err != nil {
