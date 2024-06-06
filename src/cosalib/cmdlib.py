@@ -274,6 +274,20 @@ def extract_image_json(workdir, commit):
             print("Warning: Legacy operating on ostree image that does not contain image.json")
 
 
+def extract_live(workdir, commit):
+    repo = os.path.join(workdir, 'tmp/repo')
+    tmppath = os.path.join(workdir, 'tmp/live')
+    if os.path.exists(tmppath):
+        shutil.rmtree(tmppath)
+    output = subprocess.check_output(['ostree', f'--repo={repo}', 'ls', commit,
+                                      '/usr/share/coreos-assembler'], encoding='utf-8')
+    if 'live' in output:
+        subprocess.check_call(['ostree', f'--repo={repo}', 'checkout', '-U',
+                               '--subpath=/usr/share/coreos-assembler/live', commit, tmppath])
+        return True
+    return False
+
+
 # In coreos-assembler, we are strongly oriented towards the concept of a single
 # versioned "build" object that has artifacts.  But rpm-ostree (among other things)
 # really natively wants to operate on unpacked ostree repositories.  So, we maintain

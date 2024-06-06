@@ -20,7 +20,7 @@ import yaml
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from cosalib.builds import Builds
 from cosalib.cmdlib import runcmd, sha256sum_file
-from cosalib.cmdlib import import_ostree_commit, get_basearch, ensure_glob
+from cosalib.cmdlib import import_ostree_commit, extract_live, get_basearch, ensure_glob
 from cosalib.meta import GenericBuildMeta
 
 live_exclude_kargs = set([
@@ -47,11 +47,6 @@ if not args.build:
     args.build = builds.get_latest()
 print(f"Targeting build: {args.build}")
 
-srcdir_prefix = "src/config/live/"
-
-if not os.path.isdir(srcdir_prefix):
-    raise Exception(f"missing directory {srcdir_prefix}")
-
 workdir = os.path.abspath(os.getcwd())
 builddir = builds.get_build_dir(args.build)
 buildmeta_path = os.path.join(builddir, 'meta.json')
@@ -64,6 +59,15 @@ buildmeta_commit = buildmeta['ostree-commit']
 import_ostree_commit(workdir, builddir, buildmeta)
 with open(os.path.join(workdir, 'tmp/image.json')) as f:
     image_json = json.load(f)
+
+if extract_live(workdir, buildmeta_commit):
+    srcdir_prefix = "tmp/live"
+else:
+    srcdir_prefix = "src/config/live/"
+
+if not os.path.isdir(srcdir_prefix):
+    raise Exception(f"missing directory {srcdir_prefix}")
+
 squashfs_compression = 'lz4' if args.fast else image_json['squashfs-compression']
 
 base_name = buildmeta['name']
