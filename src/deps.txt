@@ -39,8 +39,8 @@ podman buildah skopeo
 jq
 yq
 
-# For interacting with AWS/Aliyun/HTTP
-golang-github-aliyun-cli python3-boto3 python3-requests
+# For interacting with AWS/HTTP
+python3-boto3 python3-requests
 
 # For python retries
 python3-tenacity
@@ -72,9 +72,6 @@ python3-resultsdb_api
 python3-resultsdb_conventions
 python3-resultsdb_conventions-fedora
 python3-fedfind
-
-# For creating JUnit test results for Jenkins
-python3-junit_xml
 
 # For debugging running processes in the pipelines
 strace
